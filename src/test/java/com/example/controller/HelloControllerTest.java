@@ -26,4 +26,13 @@ public class HelloControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(hello));
     }
+
+    @Test
+    public void world_반환() throws Exception {
+        String world = "world";
+
+        mvc.perform(get("/world"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(world));
+    }
 }
