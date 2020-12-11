@@ -1,37 +1,21 @@
 #!/bin/bash
-# sudo bash {PATH}/deploy.sh 8080 springproject
 
-# Server Port
-# Ex) 8080
-SERVER_PORT=$1
-# Service Name
-# Ex) springproject
-PROJECT_NAME=$2
+DOCKER_APP_NAME=springproject
 
-PROJECT_PATH=/var/lib/jenkins/workspace/$PROJECT_NAME/build/libs
-WAR_FILE=$PROJECT_PATH/$PROJECT_NAME-1.0.1-SNAPSHOT.war
-TMP_PATH_NAME=/tmp/$PROJECT_NAME-pid
+EXIST_BLUE=$(/usr/local/bin/docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml ps | grep Up)
 
-# Function
-function stop(){
-    sudo echo " "
-    sudo echo "Stoping process on port: $SERVER_PORT"
-    sudo fuser -n tcp -k $SERVER_PORT
+if [ -z "$EXIST_BLUE" ]; then
+    echo "blue up"
+    /usr/local/bin/docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml up -d --build
 
-    if [ -f $TMP_PATH_NAME ]; then
-        sudo rm $TMP_PATH_NAME
-    fi
+    sleep 10
 
-    sudo echo " "
-}
+    /usr/local/bin/docker-compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml down
+else
+    echo "green up"
+    /usr/local/bin/docker-compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml up -d --build
 
-function start(){
-    sudo echo " "
-    sudo nohup java -jar -Dserver.port=$SERVER_PORT $WAR_FILE /tmp 2>> /dev/null >> /dev/null &
-    sudo echo " "
-}
+    sleep 10
 
-# Function Call
-stop
-
-start
+    /usr/local/bin/docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml down
+fi
