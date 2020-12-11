@@ -1,25 +1,22 @@
-buildscript {
-    // 전역 변수 설정
-    ext {
-        springBootVersion = '2.1.7.RELEASE'
-    }
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    }
-}
-
 // 플러그인 의존성
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
+plugins {
+    id 'java'
+    id 'war'
+    id 'eclipse'
+    id 'org.springframework.boot' version '2.1.10.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+}
 
 group 'com.example'
 version '1.0.1-SNAPSHOT-'+new Date().format("yyyyMMddHHmmss")
+
+sourceCompatibility = '1.8'     // Java 8버전
+targetCompatibility = '1.8'     // Java 8버전
+
+bootWar{                        //bootWar Task시 이름 지정
+    archiveBaseName="springproject"
+    archiveVersion="1.0.1-SNAPSHOT"
+}
 
 // 의존성 원격 저장소 위치
 // - jcenter()는 mavenCentral()의 라이브러리 업로드의 번거로움을 간단하게 처리한다.
@@ -33,6 +30,11 @@ dependencies {
     // Lombok
     // - Preference의 Annotation Processors에서 'Enable annotation processing' 항목 활성화 필요
     compile('org.projectlombok:lombok')
+
+    //내장톰캣
+    compile 'org.apache.tomcat.embed:tomcat-embed-jasper'
+    // jsp 의존성
+    compile 'javax.servlet:jstl:1.2'
 
     // 기본
     compile('org.springframework.boot:spring-boot-starter-web')
