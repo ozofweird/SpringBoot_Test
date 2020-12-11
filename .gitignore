@@ -1,0 +1,7 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea
+# Project exclude paths
+/.gradle/
+/build/
+/build/classes/java/main/
+/build/classes/java/test/
